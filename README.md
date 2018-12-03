@@ -23,6 +23,12 @@
 [![Join
 Slack](https://img.shields.io/badge/join-slack-9B69A0.svg)](http://slack.openwhisk.org/)
 
+# Notice
+
+The Python Composer library is now part of the Apache OpenWhisk (incubating) project. The Python Composer code is now hosted at https://github.com/apache/incubator-openwhisk-composer-python. Issues and pull requests should be filed against the new repository.
+
+---
+
 This repository provides a Python library for [Composer](https://github.com/apache/incubator-openwhisk-composer). For convenience, the Composer documentation is repeated below using Python bindings instead of JavaScript.
 
 Composer is a new programming model for composing cloud functions built on
