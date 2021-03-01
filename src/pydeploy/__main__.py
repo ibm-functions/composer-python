@@ -99,6 +99,7 @@ def main():
         names = ' '.join([n['name'] for n in actions])
         print('ok: created action'+ ('s' if len(names) > 1 else '') + '' + names)
     except Exception as err:
+        # FIXME not all exceptions have the error attribute!
         print(err.error)
         sys.exit(500 - 256)
 

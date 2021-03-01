@@ -28,18 +28,16 @@ class Client:
         self.actions = Action(self)
 
     def parse_options(self, options):
-        api_key = options['api_key'] if 'api_key' in options else (os.environ['__OW_API_KEY'] if '__OW_API_KEY' in os.environ else None)
+        auth_header = options['auth_header']
         ignore_certs = options['ignore_certs'] if 'ignore_certs' in options else False
         # if apihost is available, parse this into full API url
         api = options['api'] if 'api' in options else self.url_from_apihost(options['apihost'] if 'apihost' in options else (os.environ['__OW_APIHOST'] if '__OW_API___OW_APIHOST' in os.environ else None))
 
-        if api_key is None:
-            raise Exception(invalid_options_error, 'Missing api_key parameter.')
-        elif api is None:
+        if api is None:
             raise Exception(invalid_options_error, 'Missing either api or apihost parameters.')
 
         namespace = options['namespace'] if 'namespace' in options else None
-        return {'api_key':api_key, 'api': api, 'ignore_certs':ignore_certs, 'namespace': namespace }
+        return {'auth_header': auth_header, 'api': api, 'ignore_certs':ignore_certs, 'namespace': namespace}
 
     def url_from_apihost(self, apihost):
         if apihost is None:
@@ -59,7 +57,7 @@ class Client:
 
         serializer = options['serializer'] if 'serializer' in options else None
         payload = json.dumps(body, default=serializer)
-        headers = { 'Authorization': self.auth_header(), 'Content-Type': 'application/json' }
+        headers = { 'Authorization': self.options['auth_header'], 'Content-Type': 'application/json' }
         verify = not self.options['ignore_certs']
 
         resp = requests.request(method, url, params=params, data=payload, headers=headers, verify=verify)
@@ -80,9 +78,6 @@ class Client:
 
     def api_url(self):
         return urllib.parse.urlparse(self.options['api'] if self.options['api'].endswith('/') else self.options['api'] + '/')
-
-    def auth_header(self):
-        return 'Basic '+ base64.b64encode(self.options['api_key'].encode()).decode()
 
 default_namespace = os.environ['__OW_NAMESPACE'] if '__OW_NAMESPACE' in os.environ else '_'
 
@@ -105,7 +100,6 @@ class BaseOperation:
         return path
 
     def namespace(self, options=None):
-
         if options is not None and isinstance(options['namespace'], str):
             return urllib.parse.quote(options['namespace'].encode('utf-8'))
 
@@ -178,6 +172,10 @@ class Resource(BaseOperation):
 
     def parse_namespace(self, options):
         id = self.retrieve_id(options)
+
+        # The namespace will be set when IAM authentication is used
+        if self.client.options['namespace']:
+            return self.client.options['namespace']
 
         if id.startswith('/'):
             return parse_namespace(id)
