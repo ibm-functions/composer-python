@@ -29,7 +29,8 @@ import traceback
 from conductor import __version__
 from .ibmcloud_utils import (
     get_iam_auth_header,
-    get_namespace
+    get_namespace_id,
+    get_namespace_mode
 )
 
 def escape(str):
@@ -112,10 +113,9 @@ def openwhisk(options):
     if 'api_key' in options:
         api_key = options['api_key']
 
-    namespace = get_namespace()
-    if namespace['mode'] == 'IAM':
+    if get_namespace_mode() == 'IAM':
         options['auth_header'] = get_iam_auth_header()
-        options['namespace'] = namespace['id']
+        options['namespace'] = get_namespace_id()
     else:
         options['auth_header'] = 'Basic '+ base64.b64encode(api_key.encode()).decode()
 

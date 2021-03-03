@@ -21,6 +21,14 @@ def get_namespace():
     }
 
 
+def get_namespace_id():
+    return get_namespace()['id']
+
+
+def get_namespace_mode():
+    return get_namespace()['mode']
+
+
 def get_iam_auth_header():
     ic_config_path = os.environ.get(
         'IC_CONFIG_FILE',
