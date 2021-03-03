@@ -1,5 +1,11 @@
 import json
 import os
+from enum import Enum
+
+
+class NamespaceType(Enum):
+    IAM = 1
+    CF = 2
 
 
 def get_namespace():
@@ -15,9 +21,16 @@ def get_namespace():
         print('Error: Could not open ibmcloud functions plugin config.')
         raise e
 
+    namespace_mode_str = fn_config['WskCliNamespaceMode']
+    try:
+        namespace_mode = NamespaceType[namespace_mode_str]
+    except KeyError as e:
+        print(f'Error: Found unknown namespace mode {namespace_mode_str} in functions config.')
+        raise e
+
     return {
         'id': fn_config['WskCliNamespaceId'],
-        'mode': fn_config['WskCliNamespaceMode']
+        'mode': namespace_mode
     }
 
 
