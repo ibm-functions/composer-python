@@ -114,11 +114,15 @@ def openwhisk(options):
     if 'api_key' in options:
         api_key = options['api_key']
 
-    if get_namespace_mode() == NamespaceType.IAM:
+    namespace_mode = get_namespace_mode()
+    if namespace_mode == NamespaceType.IAM:
         options['auth_header'] = get_iam_auth_header()
         options['namespace'] = get_namespace_id()
     else:
         options['auth_header'] = 'Basic '+ base64.b64encode(api_key.encode()).decode()
+
+    print('deploying to {}-based namespace \'{}\' ...'
+          .format(namespace_mode.name, options['namespace'] or '_'))
 
     try:
         import openwhisk

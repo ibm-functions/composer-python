@@ -18,7 +18,7 @@ def get_namespace():
         with open(fn_config_path) as f:
             fn_config = json.load(f)
     except IOError as e:
-        print('Error: Could not open ibmcloud functions plugin config.')
+        print('Could not open ibmcloud functions plugin config')
         raise e
 
     namespace_mode_str = fn_config['WskCliNamespaceMode']
@@ -52,7 +52,7 @@ def get_iam_auth_header():
         with open(ic_config_path) as f:
             ic_config = json.load(f)
     except IOError as e:
-        print('Error: Could not open ibmcloud config.')
+        print('Could not open ibmcloud config')
         raise e
 
     return ic_config['IAMToken']
