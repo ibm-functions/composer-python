@@ -120,9 +120,10 @@ def openwhisk(options):
         options['namespace'] = get_namespace_id()
     else:
         options['auth_header'] = 'Basic '+ base64.b64encode(api_key.encode()).decode()
+        options['namespace'] = '_'
 
     print('deploying to {}-based namespace \'{}\' ...'
-          .format(namespace_mode.name, options['namespace'] or '_'))
+          .format(namespace_mode.name, options['namespace']))
 
     try:
         import openwhisk
