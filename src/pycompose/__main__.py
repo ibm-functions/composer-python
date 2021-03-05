@@ -20,6 +20,7 @@
 import argparse
 import json
 import composer
+import imp
 
 def main():
     parser = argparse.ArgumentParser(description='compile compositions', prog='pycompose', usage='%(prog)s composition.py command [flags]')
@@ -30,16 +31,11 @@ def main():
     args = parser.parse_args()
 
     filename = args.file
-    with open(filename, encoding='UTF-8') as f:
-        source = f.read()
 
     main = '''exec(code + "\\n__out__['value'] = main()", {'__out__':__out__})'''
 
     try:
-        out = {'value': None}
-        exec(main, {'code': source, '__out__': out})
-
-        composition = out['value']
+        composition = imp.load_source('compose.imported', filename).main()
         composition = composition.compile()
 
         if args.ast:
