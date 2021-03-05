@@ -119,7 +119,7 @@ def openwhisk(options):
         options['auth_header'] = get_iam_auth_header()
         options['namespace'] = get_namespace_id()
     else:
-        options['auth_header'] = 'Basic '+ base64.b64encode(api_key.encode()).decode()
+        options['api_key'] = api_key
         options['namespace'] = '_'
 
     print('deploying to {}-based namespace \'{}\' ...'
