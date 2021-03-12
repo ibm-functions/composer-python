@@ -58,6 +58,12 @@ the sequence is not executed. Moreover, if the sequence is enclosed in an error
 handling composition like a `composer.try(sequence, handler)` combinator, the
 execution continues with the error handler.
 
+### Reserved parameter name
+
+The field name `$composer` is reserved for composer internal use. Compositions
+and composed actions should not expect or return parameter objects with a
+top-level field named `$composer`.
+
 ## Data flow
 
 The invocation of a composition triggers a series of computations (possibly
@@ -118,10 +124,10 @@ Deploying such a composition deploys the embedded actions.
 ## Conductor actions
 
 Compositions are implemented by means of OpenWhisk [conductor
-actions](https://github.com/apache/incubator-openwhisk/blob/master/docs/conductors.md).
+actions](https://github.com/apache/openwhisk/blob/master/docs/conductors.md).
 Compositions have all the attributes and capabilities of an action, e.g.,
 default parameters, limits, blocking invocation, web export. Execution
-[traces](https://github.com/apache/incubator-openwhisk/blob/master/docs/conductors.md#activations)
+[traces](https://github.com/apache/openwhisk/blob/master/docs/conductors.md#activations)
 and
-[limits](https://github.com/apache/incubator-openwhisk/blob/master/docs/conductors.md#limits)
+[limits](https://github.com/apache/openwhisk/blob/master/docs/conductors.md#limits)
 of compositions follow from conductor actions.

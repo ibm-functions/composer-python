@@ -67,7 +67,8 @@ def synthesize(composition): # dict
     annotations = [
         { 'key': 'conductor', 'value': str(composition['ast']) },
         { 'key': 'composerVersion', 'value': composition['version'] },
-        { 'key': 'conductorVersion', 'value': __version__ }
+        { 'key': 'conductorVersion', 'value': __version__ },
+        { 'key': 'provide-api-key', 'value': True }
     ]
 
     return { 'name': composition['name'], 'action': { 'exec': { 'kind': 'python:3', 'code':code }, 'annotations': annotations } }
@@ -251,7 +252,7 @@ def conductor(composition): # main.
 
     @operator
     def _action(p, node, index, inspect, step):
-        return { 'method': 'action', 'action': node['name'], 'params': p['params'], 'state': { '$resume': p['s'] } }
+        return { 'method': 'action', 'action': node['name'], 'params': p['params'], 'state': { '$composer': p['s'] } }
 
     @operator
     def _function(p, node, index, inspect, step):
@@ -282,7 +283,7 @@ def conductor(composition): # main.
     def _async(p, node, index, inspect, step):
         nonlocal wsk
 
-        p['params']['$resume'] = { 'state': p['s']['state'], 'stack': [{ 'marker': True }] + p['s']['stack'] }
+        p['params']['$composer'] = { 'state': p['s']['state'], 'stack': [{ 'marker': True }] + p['s']['stack'] }
         p['s']['state'] = index + node['return']
         if wsk is None:
             wsk = openwhisk({ 'ignore_certs': True })
@@ -400,14 +401,14 @@ def conductor(composition): # main.
 
     def invoke(params):
         ''' do invocation '''
-        resume = params.get('$resume', {})
-        if '$resume' in params:
-            del params['$resume']
-        resume['session'] = resume.get('session', os.getenv('__OW_ACTIVATION_ID'))
+        pcomposer = params.get('$composer', {})
+        if '$composer' in params:
+            del params['$composer']
+        pcomposer['session'] = pcomposer.get('session', os.getenv('__OW_ACTIVATION_ID'))
 
         # current state
         s = { 'state': 0, 'stack': [], 'resuming': True }
-        s.update(resume)
+        s.update(pcomposer)
         p = { 's': s, 'params': params }
 
         if not isinstance(p['s']['state'], int):
@@ -415,7 +416,7 @@ def conductor(composition): # main.
         if not isinstance(p['s']['stack'], list):
             return internalError('stack parameter is not an array')
 
-        if 'resuming' in resume:
+        if 'resuming' in pcomposer:
             inspect_errors(p) # handle error objects when resuming
 
         result = None
