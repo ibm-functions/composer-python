@@ -21,7 +21,7 @@
 
 # Contributing to Apache OpenWhisk
 
-Anyone can contribute to the OpenWhisk project and we welcome your contributions.
+Anyone can contribute to the OpenWhisk project, and we welcome your contributions.
 
 There are multiple ways to contribute: report bugs, improve the docs, and
 contribute code, but you must follow these prerequisites and guidelines:
@@ -50,14 +50,14 @@ Please raise any bug reports or enhancement requests on the respective project r
 list to see if your issue has already been raised.
 
 A good bug report is one that make it easy for us to understand what you were trying to do and what went wrong.
-Provide as much context as possible so we can try to recreate the issue.
+Provide as much context as possible, so we can try to recreate the issue.
 
 A good enhancement request comes with an explanation of what you are trying to do and how that enhancement would help you.
 
 ### Discussion
 
 Please use the project's developer email list to engage our community:
-[dev@openwhisk.incubator.apache.org](dev@openwhisk.incubator.apache.org)
+[dev@openwhisk.apache.org](dev@openwhisk.apache.org)
 
 In addition, we provide a "dev" Slack team channel for conversations at:
 https://openwhisk-team.slack.com/messages/dev/
