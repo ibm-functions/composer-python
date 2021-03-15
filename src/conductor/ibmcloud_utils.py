@@ -25,7 +25,7 @@ class NamespaceType(Enum):
     CF = 2
 
 
-def get_namespace():
+def get_config_functions():
     fn_config_path = os.environ.get(
         'IC_FN_CONFIG_FILE',
         os.path.expanduser('~/.bluemix/plugins/cloud-functions/config.json')
@@ -38,25 +38,23 @@ def get_namespace():
         print('Could not open ibmcloud functions plugin config')
         raise e
 
-    namespace_mode_str = fn_config['WskCliNamespaceMode']
+    return fn_config
+
+
+def get_namespace_id():
+    return get_config_functions()['WskCliNamespaceId']
+
+
+def get_namespace_mode():
+    namespace_mode_str = get_config_functions()['WskCliNamespaceMode']
+
     try:
         namespace_mode = NamespaceType[namespace_mode_str]
     except KeyError as e:
         print(f'Error: Found unknown namespace mode {namespace_mode_str} in functions config.')
         raise e
 
-    return {
-        'id': fn_config['WskCliNamespaceId'],
-        'mode': namespace_mode
-    }
-
-
-def get_namespace_id():
-    return get_namespace()['id']
-
-
-def get_namespace_mode():
-    return get_namespace()['mode']
+    return namespace_mode
 
 
 def get_config_ibmcloud():
