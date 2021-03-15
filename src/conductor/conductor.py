@@ -27,6 +27,12 @@ import re
 import requests
 import traceback
 from conductor import __version__
+from .ibmcloud_utils import (
+    NamespaceType,
+    get_iam_auth_header,
+    get_namespace_id,
+    get_namespace_mode
+)
 
 def escape(str):
     return re.sub(r'(\n|\t|\r|\f|\v|\\|\')', lambda m:{'\n':'\\n','\t':'\\t','\r':'\\r','^\f':'\\f','\v':'\\v','\\':'\\\\','\'':'\\\''}[m.group()], str)
@@ -77,6 +83,11 @@ def openwhisk(options):
     ''' return enhanced openwhisk client capable of deploying compositions '''
 
     # try to extract apihost and key first from whisk property file file and then from os.environ
+    # api_key precedence; only relevant for CF namespaces, from highest to lowest:
+    # 1. CLI option --auth
+    # 2. Environment variable __OW_API_KEY
+    # 3. AUTH value in ~/.wskprops file
+
     try:
         wskpropsPath = os.environ['WSK_CONFIG_FILE'] if 'WSK_CONFIG_FILE' in os.environ else os.path.expanduser('~/.wskprops')
         with open(wskpropsPath) as f:
@@ -90,7 +101,7 @@ def openwhisk(options):
                 if parts[0] == 'APIHOST':
                     options['apihost'] = parts[1]
                 elif parts[0] == 'AUTH':
-                    options['api_key'] = parts[1]
+                    api_key = parts[1]
     except:
         pass
 
@@ -98,12 +109,27 @@ def openwhisk(options):
         options['apihost'] = os.environ['__OW_API_HOST']
 
     if '__OW_API_KEY' in os.environ:
-            options['api_key'] = os.environ['__OW_API_KEY']
+        api_key = os.environ['__OW_API_KEY']
+
+    if 'api_key' in options:
+        api_key = options['api_key']
+
+    namespace_mode = get_namespace_mode()
+    if namespace_mode == NamespaceType.IAM:
+        options['auth_header'] = get_iam_auth_header()
+        options['namespace'] = get_namespace_id()
+    else:
+        options['api_key'] = api_key
+        options['namespace'] = '_'
+
+    print('deploying to {}-based namespace \'{}\' ...'
+          .format(namespace_mode.name, options['namespace']))
 
     try:
         import openwhisk
         wsk = openwhisk.Client(options)
     except:
+        # FIXME proper exception handling, Client is not defined here
         wsk = Client(options)
 
     wsk.compositions = Compositions(wsk)

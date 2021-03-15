@@ -30,6 +30,7 @@ addons:
 env:
   global:
     - IGNORE_CERTS=true
+    - IC_FN_CONFIG_FILE=./tests/cf-plugin-config.json
   matrix:
     - TOXENV=check
 
