@@ -18,6 +18,7 @@
 import json
 import os
 from enum import Enum
+import datetime
 
 
 class NamespaceType(Enum):
@@ -75,3 +76,23 @@ def get_config_ibmcloud():
 
 def get_iam_token():
     return get_config_ibmcloud()['IAMToken']
+
+
+def get_iam_token_timestamp():
+    timestamp =  get_config_functions()['IamTimeTokenRefreshed']
+
+    # Remove colon from UTC time offset string to parse it with strptime's %z
+    if timestamp[-3] == ':':
+        timestamp = timestamp[:-3] + timestamp[-2:]
+
+    # We remove the tzinfo to allow for comparison with datetime.now() which
+    # returns a naive datetime object. Since both timestamps are most likely
+    # generated in the same timezone, this should be ok.
+    return datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S%z').replace(tzinfo=None)
+
+
+def iam_token_expired(time_refreshed, time_reference = None):
+    if not time_reference:
+        time_reference = datetime.datetime.now()
+
+    return time_reference - time_refreshed > datetime.timedelta(hours=1)

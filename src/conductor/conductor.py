@@ -30,8 +30,10 @@ from conductor import __version__
 from .ibmcloud_utils import (
     NamespaceType,
     get_iam_token,
+    get_iam_token_timestamp,
     get_namespace_id,
-    get_namespace_mode
+    get_namespace_mode,
+    iam_token_expired
 )
 
 def escape(str):
@@ -118,6 +120,15 @@ def openwhisk(options):
     if namespace_mode == NamespaceType.IAM:
         options['auth_header'] = get_iam_token()
         options['namespace'] = get_namespace_id()
+        token_timestamp = get_iam_token_timestamp()
+
+        if iam_token_expired(token_timestamp):
+            print(
+                'Error: Your IAM token seems to be expired. Plase perform an `ibmcloud login` '
+                'to make sure your token is up to date.'
+            )
+            raise Exception('IAM token expired')
+
     else:
         options['api_key'] = api_key
         options['namespace'] = '_'
