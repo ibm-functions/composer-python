@@ -463,6 +463,7 @@ def main(args):
         else:
             try:
                 exc = inspect.getsource(options['action'])
+                entry_point = options['action'].__name__
             except OSError:
                 raise ComposerError('Invalid argument "options" in "action" combinator', options['action'])
     elif 'action' in options and (isinstance(options['action'], str) or isinstance(options['action'],  dict)):
@@ -470,6 +471,8 @@ def main(args):
 
     if isinstance(exc, str):
         exc = { 'kind': 'python:3', 'code': exc }
+        if entry_point:
+            exc['main'] = entry_point
 
     composition = { 'type': 'action', 'name': name, '.combinator': lambda: combinators['action']}
     if exc is not None:

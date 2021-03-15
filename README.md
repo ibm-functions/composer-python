@@ -70,11 +70,20 @@ illustrated in [samples/demo.py](samples/demo.py):
 ```python
 import composer
 
+def authenticate(args):
+    return {'value': args['password'] == 'abc123'}
+
+def success(args):
+    return {'message': 'success'}
+
+def failure(args):
+    return {'message': 'failure'}
+
 def main():
     return composer.when(
-        composer.action('authenticate',  { 'action': lambda args: { 'value': args['password'] == 'abc123' } }),
-        composer.action('success', { 'action': lambda args: { 'message': 'success' } }),
-        composer.action('failure', { 'action': lambda args: { 'message': 'failure' } }))
+        composer.action('authenticate',  { 'action': authenticate }),
+        composer.action('success', { 'action': success }),
+        composer.action('failure', { 'action': failure }))
 ```
 Compositions compose actions using [combinator](docs/COMBINATORS.md) methods. These methods
 implement the typical control-flow constructs of a sequential imperative
