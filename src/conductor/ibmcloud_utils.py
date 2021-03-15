@@ -59,7 +59,7 @@ def get_namespace_mode():
     return get_namespace()['mode']
 
 
-def get_iam_auth_header():
+def get_config_ibmcloud():
     ic_config_path = os.environ.get(
         'IC_CONFIG_FILE',
         os.path.expanduser('~/.bluemix/config.json')
@@ -72,4 +72,8 @@ def get_iam_auth_header():
         print('Could not open ibmcloud config')
         raise e
 
-    return ic_config['IAMToken']
+    return ic_config
+
+
+def get_iam_token():
+    return get_config_ibmcloud()['IAMToken']

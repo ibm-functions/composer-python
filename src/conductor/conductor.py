@@ -29,7 +29,7 @@ import traceback
 from conductor import __version__
 from .ibmcloud_utils import (
     NamespaceType,
-    get_iam_auth_header,
+    get_iam_token,
     get_namespace_id,
     get_namespace_mode
 )
@@ -116,7 +116,7 @@ def openwhisk(options):
 
     namespace_mode = get_namespace_mode()
     if namespace_mode == NamespaceType.IAM:
-        options['auth_header'] = get_iam_auth_header()
+        options['auth_header'] = get_iam_token()
         options['namespace'] = get_namespace_id()
     else:
         options['api_key'] = api_key
