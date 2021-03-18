@@ -123,11 +123,10 @@ def openwhisk(options):
         token_timestamp = get_iam_token_timestamp()
 
         if iam_token_expired(token_timestamp):
-            print(
+            raise Exception(
                 'Error: Your IAM token seems to be expired. Plase perform an `ibmcloud login` '
                 'to make sure your token is up to date.'
             )
-            raise Exception('IAM token expired')
 
     else:
         options['api_key'] = api_key
