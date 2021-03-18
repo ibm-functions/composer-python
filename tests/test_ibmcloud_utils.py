@@ -67,4 +67,4 @@ class TestIamTokenExpireCheck:
         with pytest.raises(Exception) as e:
             openwhisk({})
 
-        assert 'IAM token expired' in str(e)
+        assert 'IAM token seems to be expired' in str(e)
