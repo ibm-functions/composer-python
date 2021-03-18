@@ -18,7 +18,7 @@
 -->
 # composer-python
 
-[![Build Status](https://travis-ci.org/apache/openwhisk-composer-python.svg?branch=master)](https://travis-ci.org/apache/openwhisk-composer-python)
+[![Build Status](https://travis-ci.org/ibm-functions/composer-python.svg?branch=master)](https://travis-ci.org/ibm-functions/composer-python)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Join
 Slack](https://img.shields.io/badge/join-slack-9B69A0.svg)](http://slack.openwhisk.org/)
@@ -39,12 +39,12 @@ This repository includes:
 
 ## Installation
 
-You need python3.6 installed on your system.
+You need Python 3 installed on your system.
 
-### From github
+### Install from source
 
-```bash
-$ git clone https://github.com/apache/openwhisk-composer-python.git
+```console
+$ git clone https://github.com/ibm-functions/composer-python.git
 $ cd composer-python
 $ pip3 install -e .
 $ pycompose -h
@@ -53,14 +53,11 @@ $ pydeploy -h
 usage: pydeploy composition composition.json [flags]
 ```
 
-### From PyPi (**Not available yet**)
+### Install using pip
 
-Composer will eventually be distributed on [PyPi](https://pypi.org/). Once it is available, to install this package, use `pip`:
+```console
+$ pip3 install git+https://github.com/ibm-functions/composer-python.git
 ```
-$ pip3 install openwhisk-composer
-```
-Shell embeds the Composer package, so there is no need to install
-Composer for Python explicitly when using Shell.
 
 ## Defining a composition
 
@@ -96,11 +93,10 @@ result of this invocation, invokes either the second or third action.
 ## Deploying a composition
 
 One way to deploy a composition is to use the `pycompose` and `pydeploy` commands:
-```
-pycompose demo.py > demo.json
-pydeploy demo demo.json -w
-```
-```
+
+```console
+$ pycompose demo.py > demo.json
+$ pydeploy demo demo.json -w
 ok: created /_/authenticate,/_/success,/_/failure,/_/demo
 ```
 The `pycompose` command compiles the composition code to a portable JSON format.
@@ -112,30 +108,28 @@ existing definitions.
 ## Running a composition
 
 The `demo` composition may be invoked like any action, for instance using the
-OpenWhisk CLI:
-```
-wsk action invoke demo -p password passw0rd
-```
-```
+[IBM Cloud CLI](https://cloud.ibm.com/docs/cli):
+
+```console
+$ ibmcloud fn action invoke demo -p password passw0rd
 ok: invoked /_/demo with id 09ca3c7f8b68489c8a3c7f8b68b89cdc
 ```
+
 The result of this invocation is the result of the last action in the
 composition, in this case the `failure` action since the password in incorrect:
-```
-wsk activation result 09ca3c7f8b68489c8a3c7f8b68b89cdc
-```
-```json
+
+```console
+$ ibmcloud fn activation result 09ca3c7f8b68489c8a3c7f8b68b89cdc
 {
     "message": "failure"
 }
 ```
+
 ## Execution traces
 
 This invocation creates a trace, i.e., a series of activation records:
-```
-wsk activation list
-```
-<pre>
+```console
+$ ibmcloud fn activation list
 Datetime            Activation ID                    Kind     Start Duration   Status  Entity
 2019-03-15 16:43:22 e6bea73bf75f4eb7bea73bf75fdeb703 nodejs:6 warm  1ms        success guest/demo:0.0.1
 2019-03-15 16:43:21 7efb6b7354c3472cbb6b7354c3272c98 nodejs:6 cold  31ms       success guest/failure:0.0.1
@@ -143,7 +137,7 @@ Datetime            Activation ID                    Kind     Start Duration   S
 2019-03-15 16:43:20 5dceeccbdc7a4caf8eeccbdc7a9caf18 nodejs:6 cold  29ms       success guest/authenticate:0.0.1
 2019-03-15 16:43:19 66355a1f012d4ea2b55a1f012dcea264 nodejs:6 cold  104ms      success guest/demo:0.0.1
 2019-03-15 16:43:19 09ca3c7f8b68489c8a3c7f8b68b89cdc sequence warm  3.144s     success guest/demo:0.0.1
-</pre>
+```
 
 The entry with the earliest start time (`09ca3c7f8b68489c8a3c7f8b68b89cdc`)
 summarizes the invocation of the composition while other entries record later
