@@ -31,6 +31,7 @@ env:
   global:
     - IGNORE_CERTS=true
     - IC_FN_CONFIG_FILE=./tests/cf-plugin-config.json
+    - IC_CONFIG_FILE=./tests/cf-config.json
   matrix:
     - TOXENV=check
 
