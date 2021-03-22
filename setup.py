@@ -47,7 +47,7 @@ setup(
     long_description='Composer Python is a new programming model for composing cloud functions built on Apache OpenWhisk.',
     author='Apache OpenWhisk Community',
     author_email='dev@openwhisk.apache.org',
-    url='https://github.com/apache/openwhisk-composer-python',
+    url='https://github.com/ibm-functions/composer-python',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
